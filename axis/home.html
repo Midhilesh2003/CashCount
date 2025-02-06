@@ -9,14 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CashCount | Axis Bank Cards</title>
     <style>
-        /* Dark Mode Styling */
         body {
             background-color: #121212;
             color: #fff;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            padding-top: 120px; /* Create space for the fixed navbar */
+            padding-top: 120px;
             transition: background-color 0.3s ease;
         }
 
@@ -25,7 +24,6 @@
             text-decoration: none;
         }
 
-        /* Navbar Styling */
         .navbar {
             position: fixed;
             top: 20px;
@@ -133,11 +131,10 @@
             }
         }
 
-        /* Search Input Styling */
         .search-container {
             position: relative;
             margin: 0 auto;
-            text-align: center; /* Center the input */
+            text-align: center;
             margin-bottom: 20px;
         }
 
@@ -157,7 +154,6 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Card Button Styling */
         .card-buttons {
             display: flex;
             justify-content: center;
@@ -185,19 +181,16 @@
             max-height: 70%;
         }
 
-        /* Hover Effect */
         .card-button:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 15px 4px rgba(255, 255, 255, 0.5); /* Glow effect */
+            box-shadow: 0 0 15px 4px rgba(255, 255, 255, 0.5);
         }
 
-        /* Active (Pressed) Effect */
         .card-button:active {
-            transform: scale(0.85); /* Slightly shrink on click */
-            box-shadow: none; /* Remove glow when pressed */
+            transform: scale(0.85);
+            box-shadow: none;
         }
 
-        /* Footer Styling */
         footer {
             background-color: #181818;
             padding: 20px;
@@ -216,7 +209,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* Center the slider */
+    align-items: center;
     margin-top: 30px;
 }
 
@@ -228,29 +221,26 @@
     border-radius: 20px;
     margin-bottom: 20px;
     position: relative;
-    overflow: hidden; /* Ensure highlighter stays within bounds */
+    overflow: hidden;
 }
 
-/* Hide the radio buttons */
 .slider input[type="radio"] {
     display: none;
 }
 
-/* Label Styling */
 .slider label {
     padding: 10px;
     content: '';
     color: #ddd;
     font-size: 18px;
     width: 150px;
-    text-align: center; /* Center the text */
+    text-align: center;
     cursor: pointer;
     border-radius: 20px;
     position: relative;
 }
 
 
-/* Grey Highlighter effect for selected section */
 .slider input[type="radio"]:checked + label {
     background-color: rgba(255, 255, 255, 0.2);
     color: rgb(255, 255, 255);
@@ -260,7 +250,7 @@
     left: 50%;
 }
 
-/* Hidden Sections */
+
 .bank-section, .card-section {
     display: none;
     opacity: 0;
@@ -294,28 +284,23 @@
         </div>
     </nav>
 
-    <!-- Search Input (above slider) -->
     <div class="search-container">
         <input type="text" class="search-input" id="searchInput" placeholder="Search Card" oninput="filterCards()">
     </div>
 
-    <!-- Bank Section -->
     <div class="bank-section active" id="bankSection">
         <div class="card-buttons" id="bankCards">
             <a href="./axis/fk.html" class="card-button" data-tags="axis, axis bank, flipkart, credit card">
                 <img src="../assets/Axis-Bank-Flipkart-Credit-Card.png" alt="Axis Bank Flipkart Credit Card">
             </a>
-            <!-- Add more bank cards -->
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>For any issues, feedback, reach me out at <a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Midhilesh Chinta</a>.</p>
     </footer>
 
     <script>
-        // Handle real-time search and filtering
         function filterCards() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const cardButtons = document.querySelectorAll('.card-button');
@@ -324,16 +309,14 @@
                 const buttonText = button.innerText.toLowerCase();
                 const buttonTags = button.getAttribute('data-tags').toLowerCase();
 
-                // Check if the search term matches either the name or the tags of the card
                 if (buttonText.includes(searchTerm) || buttonTags.includes(searchTerm)) {
-                    button.style.display = 'flex'; // Show the card
+                    button.style.display = 'flex';
                 } else {
-                    button.style.display = 'none'; // Hide the card
+                    button.style.display = 'none';
                 }
             });
         }
 
-        // Toggle between Bank and Card sections with a magical transition effect
         function toggleSection(section) {
             const bankSection = document.getElementById('bankSection');
             const cardSection = document.getElementById('cardSection');
@@ -342,22 +325,20 @@
             if (section === 'bank') {
                 bankSection.classList.add('active');
                 cardSection.classList.remove('active');
-                searchInput.value = ''; // Reset search input when switching sections
-                filterCards(); // Reapply filter to the bank section cards
+                searchInput.value = '';
+                filterCards();
             } else {
                 cardSection.classList.add('active');
                 bankSection.classList.remove('active');
-                searchInput.value = ''; // Reset search input when switching sections
-                filterCards(); // Reapply filter to the card section cards
+                searchInput.value = '';
+                filterCards();
             }
         }
 
-        // Call the filter function on load to hide cards if any term is pre-entered
         document.addEventListener("DOMContentLoaded", function() {
             filterCards();
         });
 
-        // Toggle Menu for small screens
         function toggleMenu() {
             const navLinks = document.querySelector('.nav-links');
             navLinks.classList.toggle('active');

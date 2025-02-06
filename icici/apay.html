@@ -165,8 +165,6 @@ input {
 option {
   color: black;
 }
-
-/* Modal styles */
 .modal {
   display: none;
   position: fixed;
@@ -190,7 +188,6 @@ option {
   margin-bottom: 10px;
 }
 
-/* Input field styles */
 input[type="date"],
 input[type="number"] {
   padding: 8px;
@@ -200,25 +197,25 @@ input[type="number"] {
   width: 200px;
 }
 
-/* Input field hover style */
+
 input[type="date"]:hover,
 input[type="number"]:hover {
   border-color: #999;
 }
 
-/* Input field focus style */
+
 input[type="date"]:focus,
 input[type="number"]:focus {
   border-color: #555;
   outline: none;
 }
 
-/* Placeholder text color */
+
 input::placeholder {
   color: #999;
 }
 
-/* Styling for submit button */
+
 button[type="submit"] {
   padding: 8px 16px;
   background-color: #2196f3;
@@ -228,7 +225,7 @@ button[type="submit"]:hover {
   background-color: #2196f3;
 }
 
-/* Styling for success button */
+
 .success-btn {
   margin: 0 10px;
   background-color: #2196f3;
@@ -238,7 +235,7 @@ button[type="submit"]:hover {
   background-color: #2196f3;
 }
 
-/* Styling for update button */
+
 .update-btn {
   margin: 0 10px;
   background-color: #2196f3;
@@ -248,7 +245,7 @@ button[type="submit"]:hover {
   background-color: #2196f3;
 }
 
-/* Styling for cancel button */
+
 .danger-btn {
   margin: 0 10px;
   background-color: #f44336;
@@ -258,14 +255,12 @@ button[type="submit"]:hover {
   background-color: #da190b;
 }
 
-/*Styling Button Bar */
 .button-bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-/* Styling for Footer */
 footer {
   position: fixed;
   bottom: 0;
@@ -297,14 +292,14 @@ footer {
 
 .navbar {
     position: fixed;
-    top: 20px; /* gap from the top */
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 95%; /* gap from left/right edges */
+    width: 95%;
     padding: 15px 20px;
     background: rgba(17, 25, 40, 0.75);
     backdrop-filter: blur(16px);
-    border-radius: 15px; /* rounded edges */
+    border-radius: 15px;
     z-index: 1000;
     display: flex;
     justify-content: space-between;
@@ -373,12 +368,12 @@ footer {
   .nav-links {
     flex-direction: column;
     position: absolute;
-    top: 60px; /* Adjust based on navbar height */
+    top: 60px;
     left: 0;
     width: 100%;
     background: rgba(17, 25, 40, 0.9);
     overflow: hidden;
-    max-height: 0; /* Hide initially */
+    max-height: 0;
     opacity: 0;
     visibility: hidden;
     transition: max-height 0.5s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
@@ -390,7 +385,7 @@ footer {
   }
 
   .nav-links.active {
-    max-height: 300px; /* Adjust as needed */
+    max-height: 300px;
     opacity: 1;
     visibility: visible;
   }
@@ -557,7 +552,7 @@ footer {
         const categoryCell = newRow.insertCell();
         const amountCell = newRow.insertCell();
         const dateCell = newRow.insertCell();
-        const cashbackCell = newRow.insertCell(); // Cashback column comes here
+        const cashbackCell = newRow.insertCell();
         const updateCell = newRow.insertCell();
         const editBtn = document.createElement('button');
         const deleteBtn = document.createElement('button');
@@ -603,7 +598,7 @@ footer {
     function openModal() {
         modal.style.display = 'block';
         formTitle.textContent = currentRow === null ? 'Add Expense' : 'Update Expense';
-        updateBtn.textContent = currentRow === null ? 'Add' : 'Update'; // Fix: Ensure button text appears
+        updateBtn.textContent = currentRow === null ? 'Add' : 'Update';
         if (currentRow === null) {
             dateInput.max = new Date().toISOString().split("T")[0];
             dateInput.value = new Date().toISOString().split("T")[0];
@@ -668,7 +663,7 @@ footer {
                 category: row.querySelector('td:nth-child(1)').textContent,
                 amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
                 date: row.querySelector('td:nth-child(3)').textContent,
-                cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent),  // Ensure cashback is saved too
+                cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent),
             };
         });
 
@@ -676,7 +671,6 @@ footer {
         updateSummary();
     }
 
-    // Returns an array of all the rows in the expenses table
     function getEntryRows() {
         return Array.from(expensesTableBody.children);
     }
@@ -701,7 +695,7 @@ footer {
         });
 
         totalAmountCell.textContent = formatCurrency(totalSpending);
-        totalCashbackCell.textContent = formatCurrency(totalCashback); // Display total cashback inside the footer
+        totalCashbackCell.textContent = formatCurrency(totalCashback); 
     }
 
     document.getElementById('download-btn').addEventListener('click', function () {

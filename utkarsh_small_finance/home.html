@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="logo.png" type="image/png">
-    <link rel="canonical" href="https://midhilesh2003.github.io/CashCount/index.html">
-    <meta name="google-site-verification" content="p2wrjXgGd8_chTaVBvwOWh_6By7oPaoRuWA8NvFboNE" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CashCount helps you calculate the cashback received on your transactions, making it easier to track your savings.">
     <meta name="keywords" content="CashCount, cashback calculator, credit card rewards, cashback tracking, finance, savings, how to get credit card cashback, calculate credit card cashback">
-    <title>CashCount | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../logo.png" type="image/png">
+    <meta name="google-site-verification" content="p2wrjXgGd8_chTaVBvwOWh_6By7oPaoRuWA8NvFboNE" />
+    <title>CashCount | Utkarsh Small Finance Bank Cards</title>
     <style>
         body {
             background-color: #121212;
@@ -24,7 +23,6 @@
             color: #ddd;
             text-decoration: none;
         }
-
         .navbar {
             position: fixed;
             top: 20px;
@@ -101,17 +99,6 @@
         }
 
         @media (max-width: 768px) {
-
-            body {
-            background-color: #121212;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            padding-top: 120px;
-            transition: background-color 0.3s ease;
-            margin-bottom: 120px;
-        }
             .nav-links {
                 flex-direction: column;
                 position: absolute;
@@ -165,6 +152,7 @@
             outline: none;
             background: rgba(255, 255, 255, 0.2);
         }
+
         .card-buttons {
             display: flex;
             justify-content: center;
@@ -201,6 +189,7 @@
             transform: scale(0.85);
             box-shadow: none;
         }
+
         footer {
             background-color: #181818;
             padding: 20px;
@@ -279,13 +268,13 @@
 <body>
     <nav class="navbar">
         <div class="logo">
-            <a href="./">
-                <img src="logo.png" alt="Logo">
+            <a href="../">
+                <img src="../logo.png" alt="Logo">
             </a>
         </div>
-        <div class="navbar-title">CashCount</div>
+        <div class="navbar-title">Utkarsh Small Finance Bank Cards</div>
         <ul class="nav-links">
-            <li><a href="about.html">About</a></li>
+            <li><a href="../about.html">About</a></li>
             <li><a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Contact</a></li>
         </ul>
         <div class="menu-toggle" onclick="toggleMenu()">
@@ -295,133 +284,65 @@
         </div>
     </nav>
 
-    <!-- Search Input (above slider) -->
     <div class="search-container">
         <input type="text" class="search-input" id="searchInput" placeholder="Search Card" oninput="filterCards()">
     </div>
 
-    <!-- Section Slider (Bank/Card) -->
-    <div class="slider-container">
-        <div class="slider">
-            <input type="radio" name="section" id="bankRadio" checked onclick="toggleSection('bank')">
-            <label for="bankRadio">Bank</label>
-            <input type="radio" name="section" id="cardRadio" onclick="toggleSection('card')">
-            <label for="cardRadio">Card</label>
-        </div>
-    </div>
-
-    <!-- Bank Section -->
     <div class="bank-section active" id="bankSection">
         <div class="card-buttons" id="bankCards">
-            <a href="./axis/home.html" class="card-button" data-tags="axis, axis bank, flipkart, fk, credit card">
-                <img src="assets/AXIS BANK PNG.png" alt="Axis Bank">
-            </a>
-            <a href="./icici/home.html" class="card-button" data-tags="icici, icici bank, amazon pay, amaozon, credit card">
-                <img src="assets/ICICI BANK.png" alt="ICICI Bank">
-            </a>
-            <a href="./idfc/home.html" class="card-button" data-tags="idfc, idfc bank, idfc first bank, idfc first earn pay, first earn, first, credit card, credit, earn, card">
-                <img src="assets/IDFC BANK.png" alt="IDFC Bank">
-            </a>
-            <!--<a href="./utkarsh_small_finance/home.html" class="card-button" data-tags="Utkarsh Small Finance Bank, small, finace, supermoney, super.money, bank. FD Card, Fixed Deposit Card, credit card">
-                <img src="assets/Utkarsh Small Finance Bank.jpg" alt="Utkarsh Small Finance Bank">-->
+            <a href="supermoney.html" class="card-button" data-tags="Utkarsh Small Finance Bank, small, finace, supermoney, super.money, bank. FD Card, Fixed Deposit Card, credit card">
+                <img src="../assets/Utkarsh Small Finance Bank.jpg" alt="Utkarsh Small Finance Bank">
             </a>
         </div>
     </div>
-
-    <!-- Card Section -->
-    <div class="card-section" id="cardSection">
-        <div class="card-buttons" id="cardCards">
-            <a href="axis/fk.html" class="card-button" data-tags="axis, axis bank, flipkart, fk, credit card">
-                <img src="assets/Axis-Bank-Flipkart-Credit-Card.png" alt="Axis Flipkart Card">
-            </a>
-            <a href="icici/apay.html" class="card-button" data-tags="icici, icici bank, amazon pay, amazon, credit card">
-                <img src="assets/ICICI-Bank-Amazon-Pay-Credit-Card.png" alt="ICICI Amazon Pay Card">
-            </a>
-            <a href="./idfc/home.html" class="card-button" data-tags="idfc, idfc bank, idfc first bank, idfc first earn pay, first earn, first, credit card, credit, earn, card">
-                <img src="assets/IDFC-FIRST-EARN-Credit-Card.webp" alt="IDFC Bank">
-            </a>
-            <!--<a href="utkarsh_small_finance/supermoney.html" class="card-button" data-tags="Utkarsh Small Finance Bank, small, finace, supermoney, super.money, bank. FD Card, Fixed Deposit Card, credit card">
-                <img src="assets/Utkarsh Small Finance Bank.jpg" alt="Utkarsh Small Finance Bank">-->
-            </a>
-        </div>
-    </div>
-
     <footer>
         <p>For any issues, feedback, reach me out at <a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Midhilesh Chinta</a>.</p>
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-    const tagButtons = document.querySelectorAll(".tag");
-    const cardButtons = document.querySelectorAll(".card-button");
-    const searchInput = document.getElementById("searchInput");
-    const bankSection = document.getElementById("bankSection");
-    const cardSection = document.getElementById("cardSection");
-    const bankRadio = document.getElementById("bankRadio");
-    const cardRadio = document.getElementById("cardRadio");
 
-    const lastSection = localStorage.getItem("lastSection") || "bank";
-    toggleSection(lastSection);
+        function filterCards() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cardButtons = document.querySelectorAll('.card-button');
 
-    function filterCards() {
-        const searchTerm = searchInput.value.toLowerCase();
-        let selectedTags = Array.from(tagButtons)
-            .filter(tag => tag.classList.contains("active"))
-            .map(tag => tag.dataset.tag);
+            cardButtons.forEach(button => {
+                const buttonText = button.innerText.toLowerCase();
+                const buttonTags = button.getAttribute('data-tags').toLowerCase();
 
-        cardButtons.forEach(button => {
-            const buttonText = button.innerText.toLowerCase();
-            const buttonTags = button.getAttribute("data-tags").toLowerCase().split(",");
-
-            const matchesSearch = buttonText.includes(searchTerm) || buttonTags.some(tag => tag.includes(searchTerm));
-            const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => buttonTags.includes(tag));
-
-            if (matchesSearch && matchesTags) {
-                button.style.display = "flex";
-            } else {
-                button.style.display = "none";
-            }
-        });
-    }
-
-    searchInput.addEventListener("input", filterCards);
-
-    tagButtons.forEach(tag => {
-        tag.addEventListener("click", function () {
-            tag.classList.toggle("active");
-            filterCards();
-        });
-    });
-
-    function toggleSection(section) {
-        if (section === "bank") {
-            bankSection.classList.add("active");
-            cardSection.classList.remove("active");
-            bankRadio.checked = true;
-            cardRadio.checked = false;
-        } else {
-            cardSection.classList.add("active");
-            bankSection.classList.remove("active");
-            cardRadio.checked = true;
-            bankRadio.checked = false;
+                if (buttonText.includes(searchTerm) || buttonTags.includes(searchTerm)) {
+                    button.style.display = 'flex';
+                } else {
+                    button.style.display = 'none';
+                }
+            });
         }
 
-        localStorage.setItem("lastSection", section);
+        function toggleSection(section) {
+            const bankSection = document.getElementById('bankSection');
+            const cardSection = document.getElementById('cardSection');
+            const searchInput = document.getElementById('searchInput');
 
-        searchInput.value = "";
-        filterCards();
-    }
+            if (section === 'bank') {
+                bankSection.classList.add('active');
+                cardSection.classList.remove('active');
+                searchInput.value = '';
+                filterCards();
+            } else {
+                cardSection.classList.add('active');
+                bankSection.classList.remove('active');
+                searchInput.value = '';
+                filterCards();
+            }
+        }
 
-    bankRadio.addEventListener("change", () => toggleSection("bank"));
-    cardRadio.addEventListener("change", () => toggleSection("card"));
+        document.addEventListener("DOMContentLoaded", function() {
+            filterCards();
+        });
 
-    filterCards();
-});
-
-function toggleMenu() {
-    const navLinks = document.querySelector(".nav-links");
-    navLinks.classList.toggle("active");
-}
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
 
     </script>
 </body>

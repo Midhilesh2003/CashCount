@@ -548,7 +548,7 @@ footer {
         const categoryCell = newRow.insertCell();
         const amountCell = newRow.insertCell();
         const dateCell = newRow.insertCell();
-        const cashbackCell = newRow.insertCell(); // Cashback column comes here
+        const cashbackCell = newRow.insertCell();
         const updateCell = newRow.insertCell();
         const editBtn = document.createElement('button');
         const deleteBtn = document.createElement('button');
@@ -569,7 +569,7 @@ footer {
         dateCell.textContent = expense.date;
 
         const cashbackRate = cashbackRates[expense.category] || 0;
-        const cashbackAmount = expense.amount * cashbackRate;
+        const cashbackAmount = Math.floor(expense.amount * cashbackRate);
         cashbackCell.textContent = formatCurrency(cashbackAmount);
 
         updateCell.appendChild(editBtn);
@@ -594,7 +594,7 @@ footer {
     function openModal() {
         modal.style.display = 'block';
         formTitle.textContent = currentRow === null ? 'Add Expense' : 'Update Expense';
-        updateBtn.textContent = currentRow === null ? 'Add' : 'Update'; // Fix: Ensure button text appears
+        updateBtn.textContent = currentRow === null ? 'Add' : 'Update';
         if (currentRow === null) {
             dateInput.max = new Date().toISOString().split("T")[0];
             dateInput.value = new Date().toISOString().split("T")[0];
@@ -629,7 +629,7 @@ footer {
         }
 
         const cashbackRate = cashbackRates[category] || 0;
-        const cashbackAmount = amount * cashbackRate;
+        const cashbackAmount = Math.floor(amount * cashbackRate);
 
         if (currentRow === null) {
             addExpense({ category, amount, date });
@@ -659,7 +659,7 @@ footer {
                 category: row.querySelector('td:nth-child(1)').textContent,
                 amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
                 date: row.querySelector('td:nth-child(3)').textContent,
-                cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent),  // Ensure cashback is saved too
+                cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent),
             };
         });
 
@@ -667,7 +667,6 @@ footer {
         updateSummary();
     }
 
-    // Returns an array of all the rows in the expenses table
     function getEntryRows() {
         return Array.from(expensesTableBody.children);
     }
@@ -692,7 +691,7 @@ footer {
         });
 
         totalAmountCell.textContent = formatCurrency(totalSpending);
-        totalCashbackCell.textContent = formatCurrency(totalCashback); // Display total cashback inside the footer
+        totalCashbackCell.textContent = formatCurrency(totalCashback);
     }
 
     document.getElementById('download-btn').addEventListener('click', function () {

@@ -583,7 +583,6 @@ function addExpense(expense = {}) {
     const cashbackRate = cashbackRates[expense.category] || 0;
     let cashbackAmount = expense.amount * cashbackRate;
 
-    // Apply Cashback Cap per Category per Month
     cashbackAmount = applyCashbackCap(expense.category, expense.date, cashbackAmount);
     cashbackCell.textContent = formatCurrency(cashbackAmount);
 
@@ -596,21 +595,21 @@ function addExpense(expense = {}) {
 
 function applyCashbackCap(category, date, cashbackAmount) {
     const expenses = JSON.parse(localStorage.getItem("SM") || "[]");
-    const monthYear = date.slice(0, 7); // Get YYYY-MM
+    const monthYear = date.slice(0, 7);
 
     let categoryTotalCashback = 0;
     expenses.forEach(exp => {
         if (exp.category === category && exp.date.slice(0, 7) === monthYear) {
-            categoryTotalCashback += exp.cashback ? exp.cashback : (exp.amount * cashbackRates[exp.category] || 0) ; // use previously calculated or calculate
+            categoryTotalCashback += exp.cashback ? exp.cashback : (exp.amount * cashbackRates[exp.category] || 0) ;
         }
     });
 
     if (categoryTotalCashback >= cashbackCap) {
-        return 0; // Already reached the cap
+        return 0;
     } else if (categoryTotalCashback + cashbackAmount > cashbackCap) {
-        return cashbackCap - categoryTotalCashback; // Cap the cashback
+        return cashbackCap - categoryTotalCashback;
     } else {
-        return cashbackAmount; // No cap needed
+        return cashbackAmount; /
     }
 }
 
@@ -670,7 +669,7 @@ function handleSubmit(event) {
 
 
     if (currentRow === null) {
-        addExpense({ category, amount, date, cashback: cashbackAmount }); // Include cashback in new expense
+        addExpense({ category, amount, date, cashback: cashbackAmount });
     } else {
         currentRow.querySelector('td:nth-child(1)').textContent = category;
         currentRow.querySelector('td:nth-child(2)').textContent = formatCurrency(amount);
@@ -697,7 +696,7 @@ function save() {
             category: row.querySelector('td:nth-child(1)').textContent,
             amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
             date: row.querySelector('td:nth-child(3)').textContent,
-            cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent), // Save cashback
+            cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent), 
         };
     });
 

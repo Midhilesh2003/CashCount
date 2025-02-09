@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
-    <title>CashCount | SBI Cash Back</title>
+    <title>CashCount | ICICI Coral</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <style>
@@ -402,7 +402,7 @@ footer {
 <body>
     <nav class="navbar">
         <div class="logo"><a href="../"><img src="../logo.png"></a></div>
-        <div class="navbar-title">SBI Cash Back Credit Card</div>
+        <div class="navbar-title">ICICI Coral Credit Card</div>
         <ul class="nav-links">
             <li><a href="../about.html">About</a></li>
             <li><a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Contact</a></li>
@@ -413,7 +413,6 @@ footer {
             <span></span>
         </div>
     </nav>
-
     <div class="expenses-list">
         <table class="glass glass-grey">
             <thead>
@@ -421,7 +420,7 @@ footer {
                     <th>Category</th>
                     <th>Dumped</th>
                     <th>Date</th>
-                    <th>Cashback</th>
+                    <th>Reward Points</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -430,8 +429,8 @@ footer {
             </tbody>
             <tfoot>
                 <tr>
-                    <td>You Dumped/Your Cashback on Dump:</td>
-                    <td id="total-amount">₹0</td>
+                    <td>You Dumped/Your Reward Points on Dump:</td>
+                    <td id="total-amount">0 Reward Points</td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -444,7 +443,6 @@ footer {
     </div>
     <br>
     <br>
-    <div class="center"><p>Cash Back will be credited in the same statement. </p></div>
     <div class="center">
         <p>For any issues, or mistakes you can mail me and it will be fixed.</p></div>
     <div>
@@ -488,260 +486,264 @@ footer {
 
 <script>
 const categorySelect = document.getElementById('form-category-select');
-const amountInput = document.getElementById('form-amount-input');
-const dateInput = document.getElementById('form-date-input');
-const addBtn = document.getElementById('add-btn');
-const expensesTableBody = document.getElementById('expense-table-body');
-const totalAmountCell = document.getElementById('total-amount');
-const modal = document.getElementById('myModal');
-const updateForm = document.getElementById('updateForm');
-const cancelBtn = document.getElementById('cancel-btn');
-const updateBtn = document.getElementById('update-btn');
-const formTitle = document.getElementById('form-title');
+    const amountInput = document.getElementById('form-amount-input');
+    const dateInput = document.getElementById('form-date-input');
+    const addBtn = document.getElementById('add-btn');
+    const expensesTableBody = document.getElementById('expense-table-body');
+    const totalAmountCell = document.getElementById('total-amount');
+    const modal = document.getElementById('myModal');
+    const updateForm = document.getElementById('updateForm');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const updateBtn = document.getElementById('update-btn');
+    const formTitle = document.getElementById('form-title');
 
-const expenseCategories = [
-    'Select Category',
-    'Online Merchant Transactions',
-    'Offline Spends',
-    '0% Cashback Spends',
-];
+    const POINTS_CAP = 10000;
+    const POINTS_MULTIPLE = 100;
 
-const cashbackRates = {
-    'Online Merchant Transactions': 0.05,
-    'Offline Spends': 0.01,
-    '0% Cashback Spends': 0.0,
-};
+    const expenseCategories = [
+        'Select Category',
+        'Domestic Transactions',
+        'International Transactions',
+        '0% Reward Point Spends',
+    ];
 
-const totalRow = document.querySelector("tfoot tr");
+    const cashbackRates = {
+        'Domestic Transactions': 0.01,
+        'International Transactions': 0.02,
+        '0% Reward Point Spends': 0.00,
+    };
 
-const totalCashbackCell = document.createElement('td');
-totalCashbackCell.id = "total-cashback";
-totalCashbackCell.textContent = "₹0.00";
-totalRow.appendChild(totalCashbackCell);
+    const totalRow = document.querySelector("tfoot tr");
 
-let totalCashback = 0;
-const MAX_CASHBACK = 5000;
+    const totalCashbackCell = document.createElement('td');
+    totalCashbackCell.id = "total-cashback";
+    totalCashbackCell.textContent = "0 Reward Points";
+    totalRow.appendChild(totalCashbackCell);
+    window.addEventListener('load', load);
 
-window.addEventListener('load', load);
+    addBtn.addEventListener('click', openModal);
 
-addBtn.addEventListener('click', openModal);
-
-function setCategories() {
-    categorySelect.innerHTML = '';
-    const categories = expenseCategories;
-    for (const category of categories) {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        categorySelect.appendChild(option);
-    }
-}
-
-function load() {
-    const expenses = JSON.parse(localStorage.getItem("CB") || "[]");
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-
-    totalCashback = 0;
-    expensesTableBody.innerHTML = '';
-
-    const currentMonthExpenses = expenses.filter(expense => {
-        const expenseDate = new Date(expense.date);
-        return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
-    });
-
-    currentMonthExpenses.forEach(addExpense);
-    updateSummary();
-}
-
-
-function addExpense(expense = {}) {
-    const newRow = expensesTableBody.insertRow();
-
-    const categoryCell = newRow.insertCell();
-    const amountCell = newRow.insertCell();
-    const dateCell = newRow.insertCell();
-    const cashbackCell = newRow.insertCell();
-    const updateCell = newRow.insertCell();
-    const editBtn = document.createElement('button');
-    const deleteBtn = document.createElement('button');
-
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.classList.add('btn', 'danger-btn');
-    editBtn.textContent = 'Edit';
-    editBtn.classList.add('btn', 'update-btn');
-    editBtn.addEventListener('click', handleEditButtonClick);
-
-    deleteBtn.addEventListener('click', event => {
-        const rowToDelete = event.target.closest('tr');
-        const cashbackToDelete = revertCurrency(rowToDelete.querySelector('td:nth-child(4)').textContent);
-        rowToDelete.remove();
-        totalCashback -= cashbackToDelete;
-        if (totalCashback < 0) {
-            totalCashback = 0;
+    function setCategories() {
+        categorySelect.innerHTML = '';
+        const categories = expenseCategories;
+        for (const category of categories) {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
         }
-        updateSummary();
-        save();
-    });
-
-    categoryCell.textContent = expense.category;
-    amountCell.textContent = formatCurrency(expense.amount);
-    dateCell.textContent = expense.date;
-
-    const cashbackRate = cashbackRates[expense.category] || 0;
-    let cashbackAmount = expense.amount * cashbackRate;
-
-    cashbackAmount = Math.min(cashbackAmount, MAX_CASHBACK - totalCashback);
-    if (cashbackAmount < 0) cashbackAmount = 0;
-
-    cashbackCell.textContent = formatCurrency(cashbackAmount);
-    totalCashback += cashbackAmount;
-
-    updateCell.appendChild(editBtn);
-    updateCell.appendChild(deleteBtn);
-
-    save();
-}
-
-let currentRow = null;
-
-function handleEditButtonClick(event) {
-    const row = event.target.closest('tr');
-    categorySelect.value = row.querySelector('td:nth-child(1)').textContent;
-    amountInput.value = revertCurrency(row.querySelector('td:nth-child(2)').textContent);
-    dateInput.value = row.querySelector('td:nth-child(3)').textContent;
-
-    currentRow = row;
-    openModal();
-}
-
-function openModal() {
-    modal.style.display = 'block';
-    formTitle.textContent = currentRow === null ? 'Add Expense' : 'Update Expense';
-    updateBtn.textContent = currentRow === null ? 'Add' : 'Update';
-    if (currentRow === null) {
-        dateInput.max = new Date().toISOString().split("T")[0];
-        dateInput.value = new Date().toISOString().split("T")[0];
-    }
-    setCategories();
-}
-
-function closeModal() {
-    modal.style.display = 'none';
-    updateForm.reset();
-    currentRow = null;
-}
-
-function handleSubmit(event) {
-    event.preventDefault();
-
-    const category = categorySelect.value;
-    let amount = Number(amountInput.value);
-    const date = dateInput.value;
-
-    if (isNaN(amount) || amount <= 0) {
-        alert('Please enter a valid amount');
-        return;
-    }
-    if (date === '') {
-        alert('Please select a date');
-        return;
-    }
-    if (category === '' || category === 'Select Category') {
-        alert('Please select a category');
-        return;
     }
 
+    function calculatePointsForYear(year) {
+        const expenses = JSON.parse(localStorage.getItem("CORAL") || "[]");
+        return expenses
+            .filter(expense => new Date(expense.date).getFullYear() === year)
+            .reduce((total, expense) => total + (expense.points || 0), 0);
+    }
+
+    function calculatePoints(amount, category, date) {
     const cashbackRate = cashbackRates[category] || 0;
-    let cashbackAmount = amount * cashbackRate;
+    if (cashbackRate === 0) return 0;
 
-    if (currentRow === null) {
-        cashbackAmount = Math.min(cashbackAmount, MAX_CASHBACK - totalCashback);
-        if (cashbackAmount < 0) cashbackAmount = 0;
-        addExpense({ category, amount, date });
-    } else {
-        const oldCashback = revertCurrency(currentRow.querySelector('td:nth-child(4)').textContent);
-        totalCashback -= oldCashback;
+    const year = new Date(date).getFullYear();
+    const currentPoints = calculatePointsForYear(year);
 
-        currentRow.querySelector('td:nth-child(1)').textContent = category;
-        currentRow.querySelector('td:nth-child(2)').textContent = formatCurrency(amount);
-        currentRow.querySelector('td:nth-child(3)').textContent = date;
+    if (currentPoints >= POINTS_CAP) {
+        return 0;
+    }
+    const pointsForTransaction = Math.floor(amount * cashbackRate);
 
-        cashbackAmount = Math.min(cashbackAmount, MAX_CASHBACK - totalCashback);
-        if (cashbackAmount < 0) cashbackAmount = 0;
+    if (currentPoints + pointsForTransaction > POINTS_CAP) {
 
-        currentRow.querySelector('td:nth-child(4)').textContent = formatCurrency(cashbackAmount);
-        totalCashback += cashbackAmount;
+        return POINTS_CAP - currentPoints;
     }
 
-    save();
-    closeModal();
+    return pointsForTransaction;
 }
 
-cancelBtn.addEventListener('click', closeModal);
-updateForm.addEventListener('submit', handleSubmit);
+    function formatPoints(points) {
+        return `${points} Reward Points`;
+    }
 
-window.addEventListener('click', function (event) {
-    if (event.target === modal) {
+    function load() {
+        const expenses = JSON.parse(localStorage.getItem("CORAL") || "[]");
+        expensesTableBody.innerHTML = '';
+        for (const expense of expenses) {
+            addExpense(expense);
+        }
+
+        updateSummary();
+    }
+
+    function addExpense(expense = {}) {
+        const newRow = expensesTableBody.insertRow();
+
+        const categoryCell = newRow.insertCell();
+        const amountCell = newRow.insertCell();
+        const dateCell = newRow.insertCell();
+        const pointsCell = newRow.insertCell();
+        const updateCell = newRow.insertCell();
+        const editBtn = document.createElement('button');
+        const deleteBtn = document.createElement('button');
+
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.classList.add('btn', 'danger-btn');
+        editBtn.textContent = 'Edit';
+        editBtn.classList.add('btn', 'update-btn');
+        editBtn.addEventListener('click', handleEditButtonClick);
+
+        deleteBtn.addEventListener('click', event => {
+            event.target.closest('tr').remove();
+            save();
+        });
+
+        categoryCell.textContent = expense.category;
+        amountCell.textContent = formatCurrency(expense.amount);
+        dateCell.textContent = expense.date;
+
+        const points = expense.points !== undefined ?
+            expense.points :
+            calculatePoints(expense.amount, expense.category, expense.date);
+        pointsCell.textContent = formatPoints(points);
+
+        updateCell.appendChild(editBtn);
+        updateCell.appendChild(deleteBtn);
+
+        save();
+    }
+
+    let currentRow = null;
+
+    function handleEditButtonClick(event) {
+        const row = event.target.closest('tr');
+        categorySelect.value = row.querySelector('td:nth-child(1)').textContent;
+        amountInput.value = revertCurrency(row.querySelector('td:nth-child(2)').textContent);
+        dateInput.value = row.querySelector('td:nth-child(3)').textContent;
+
+        currentRow = row;
+        openModal();
+    }
+
+    function openModal() {
+        modal.style.display = 'block';
+        formTitle.textContent = currentRow === null ? 'Add Expense' : 'Update Expense';
+        updateBtn.textContent = currentRow === null ? 'Add' : 'Update';
+        if (currentRow === null) {
+            dateInput.max = new Date().toISOString().split("T")[0];
+            dateInput.value = new Date().toISOString().split("T")[0];
+        }
+        setCategories();
+    }
+
+    function closeModal() {
         modal.style.display = 'none';
-    }
-});
-
-function save() {
-    const data = getEntryRows().map(row => {
-        return {
-            category: row.querySelector('td:nth-child(1)').textContent,
-            amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
-            date: row.querySelector('td:nth-child(3)').textContent,
-        };
-    });
-
-    localStorage.setItem("CB", JSON.stringify(data));
-    updateSummary();
-}
-
-function getEntryRows() {
-    return Array.from(expensesTableBody.children);
-}
-
-function formatCurrency(amount) {
-    return Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
-}
-
-function revertCurrency(amount) {
-    return Number(amount.replace(/[^0-9.-]+/g, ""));
-}
-
-function updateSummary() {
-    let totalSpending = 0;
-
-    getEntryRows().forEach(row => {
-        const amount = revertCurrency(row.querySelector('td:nth-child(2)').textContent);
-        totalSpending += amount;
-    });
-
-    totalAmountCell.textContent = formatCurrency(totalSpending);
-    totalCashbackCell.textContent = formatCurrency(totalCashback);
-}
-
-document.getElementById('download-btn').addEventListener('click', function () {
-    const data = JSON.parse(localStorage.getItem("CB") || "[]");
-
-    if (data.length === 0) {
-        alert("No data available to download.");
-        return;
+        updateForm.reset();
+        currentRow = null;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+    function handleSubmit(event) {
+        event.preventDefault();
 
-        XLSX.writeFile(workbook, "SBICASHBACKCC.xlsx");
+        const category = categorySelect.value;
+        let amount = Number(amountInput.value);
+        const date = dateInput.value;
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+        if (date === '') {
+            alert('Please select a date');
+            return;
+        }
+        if (category === '' || category === 'Select Category') {
+            alert('Please select a category');
+            return;
+        }
+
+        const points = calculatePoints(amount, category, date);
+
+        if (currentRow === null) {
+            addExpense({ category, amount, date, points });
+        } else {
+            currentRow.querySelector('td:nth-child(1)').textContent = category;
+            currentRow.querySelector('td:nth-child(2)').textContent = formatCurrency(amount);
+            currentRow.querySelector('td:nth-child(3)').textContent = date;
+            currentRow.querySelector('td:nth-child(4)').textContent = formatPoints(points);
+        }
+
+        save();
+        closeModal();
+    }
+
+    cancelBtn.addEventListener('click', closeModal);
+    updateForm.addEventListener('submit', handleSubmit);
+
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
     });
 
-function toggleMenu() {
-  document.querySelector('.nav-links').classList.toggle('active');
-}
+    function save() {
+        const data = getEntryRows().map(row => {
+            return {
+                category: row.querySelector('td:nth-child(1)').textContent,
+                amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
+                date: row.querySelector('td:nth-child(3)').textContent,
+                points: Number(row.querySelector('td:nth-child(4)').textContent.split(' ')[0])
+            };
+        });
+
+        localStorage.setItem("CORAL", JSON.stringify(data));
+        updateSummary();
+    }
+
+    function getEntryRows() {
+        return Array.from(expensesTableBody.children);
+    }
+
+    function formatCurrency(amount) {
+        return Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    }
+
+    function revertCurrency(amount) {
+        return Number(amount.replace(/[^0-9.-]+/g, ""));
+    }
+
+    function updateSummary() {
+        let totalSpending = 0;
+        let totalPoints = 0;
+
+        getEntryRows().forEach(row => {
+            const amount = revertCurrency(row.querySelector('td:nth-child(2)').textContent);
+            const points = Number(row.querySelector('td:nth-child(4)').textContent.split(' ')[0]);
+            totalSpending += amount;
+            totalPoints += points;
+        });
+
+        totalAmountCell.textContent = formatCurrency(totalSpending);
+        totalCashbackCell.textContent = formatPoints(totalPoints);
+    }
+
+    document.getElementById('download-btn').addEventListener('click', function () {
+        const data = JSON.parse(localStorage.getItem("CORAL") || "[]");
+
+        if (data.length === 0) {
+            alert("No data available to download.");
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+
+        XLSX.writeFile(workbook, "CoralCC.xlsx");
+    });
+
+    function toggleMenu() {
+        document.querySelector('.nav-links').classList.toggle('active');
+    }
     </script>
 
 <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="Midhilesh" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Left" data-x_margin="18" data-y_margin="18"></script>

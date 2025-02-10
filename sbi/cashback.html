@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
-    <title>CashCount | Super Money</title>
+    <title>CashCount | SBI Cash Back</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <style>
@@ -402,7 +402,7 @@ footer {
 <body>
     <nav class="navbar">
         <div class="logo"><a href="../"><img src="../logo.png"></a></div>
-        <div class="navbar-title"><h1>Super Money Credit Card</h1></div>
+        <div class="navbar-title"><h1>SBI Cash Back Credit Card</h1></div>
         <ul class="nav-links">
             <li><a href="../about.html">About</a></li>
             <li><a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Contact</a></li>
@@ -413,11 +413,7 @@ footer {
             <span></span>
         </div>
     </nav>
-    <br>
-    <br>
-    <div class="center">
-        <p>Only Flat Cashbacks are available for accuracy.</p>
-    </div>
+
     <div class="expenses-list">
         <table class="glass glass-grey">
             <thead>
@@ -430,6 +426,7 @@ footer {
                 </tr>
             </thead>
             <tbody id="expense-table-body">
+
             </tbody>
             <tfoot>
                 <tr>
@@ -447,9 +444,7 @@ footer {
     </div>
     <br>
     <br>
-    <div class="center">
-        <p>Cash Back will be credited directly to Super.Money App after 30 Days from Transaction.</p>
-    </div>
+    <div class="center"><p>Cash Back will be credited in the same statement. </p></div>
     <div class="center">
         <p>For any issues, or mistakes you can mail me and it will be fixed.</p></div>
     <div>
@@ -504,23 +499,17 @@ const cancelBtn = document.getElementById('cancel-btn');
 const updateBtn = document.getElementById('update-btn');
 const formTitle = document.getElementById('form-title');
 
-const MONTHLY_CASHBACK_CAP = 200;
-
 const expenseCategories = [
     'Select Category',
-    'Cleartrip',
-    'Flipkart',
-    'Mytra',
-    'International Transactions',
+    'Online Merchant Transactions',
     'Offline Spends',
+    '0% Cashback Spends',
 ];
 
 const cashbackRates = {
-    'Cleartrip': 0.03,
-    'Flipkart': 0.02,
-    'Mytra': 0.05,
-    'International Transactions': 0.00,
-    'Offline Spends': 0.005
+    'Online Merchant Transactions': 0.05,
+    'Offline Spends': 0.01,
+    '0% Cashback Spends': 0.0,
 };
 
 const totalRow = document.querySelector("tfoot tr");
@@ -529,8 +518,10 @@ const totalCashbackCell = document.createElement('td');
 totalCashbackCell.id = "total-cashback";
 totalCashbackCell.textContent = "₹0.00";
 totalRow.appendChild(totalCashbackCell);
-window.addEventListener('load', load);
 
+const MONTHLY_MAX_CASHBACK = 5000;
+
+window.addEventListener('load', load);
 addBtn.addEventListener('click', openModal);
 
 function setCategories() {
@@ -544,51 +535,47 @@ function setCategories() {
     }
 }
 
-function calculateCashbackForMonth(category, month, year) {
-    const expenses = JSON.parse(localStorage.getItem("SM") || "[]");
+function getMonthYearKey(date) {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${d.getMonth()}`;
+}
+
+function calculateMonthCashback(date) {
+    const monthYearKey = getMonthYearKey(date);
+    const expenses = JSON.parse(localStorage.getItem("CB") || "[]");
+
     return expenses
-        .filter(expense => {
-            const expenseDate = new Date(expense.date);
-            return expenseDate.getMonth() === month &&
-                   expenseDate.getFullYear() === year &&
-                   expense.category === category;
-        })
+        .filter(expense => getMonthYearKey(expense.date) === monthYearKey)
         .reduce((total, expense) => total + (expense.cashback || 0), 0);
 }
 
 function calculateCashback(amount, category, date) {
-    if (!cashbackRates[category]) return 0;
+    const cashbackRate = cashbackRates[category] || 0;
+    if (cashbackRate === 0) return 0;
 
-    const expenseDate = new Date(date);
-    const month = expenseDate.getMonth();
-    const year = expenseDate.getFullYear();
+    const currentMonthCashback = calculateMonthCashback(date);
+    let potentialCashback = amount * cashbackRate;
 
-    const currentMonthCashback = calculateCashbackForMonth(category, month, year);
-
-    const cashbackRate = cashbackRates[category];
-    const potentialCashback = amount * cashbackRate;
-
-    if (currentMonthCashback >= MONTHLY_CASHBACK_CAP) {
+    if (currentMonthCashback >= MONTHLY_MAX_CASHBACK) {
         return 0;
     }
 
-    if (currentMonthCashback + potentialCashback > MONTHLY_CASHBACK_CAP) {
-        return MONTHLY_CASHBACK_CAP - currentMonthCashback;
-    }
-
-    return potentialCashback;
+    const remainingCashback = MONTHLY_MAX_CASHBACK - currentMonthCashback;
+    return Math.min(potentialCashback, remainingCashback);
 }
 
 function load() {
-    const expenses = JSON.parse(localStorage.getItem("SM") || "[]");
+    const expenses = JSON.parse(localStorage.getItem("CB") || "[]");
     expensesTableBody.innerHTML = '';
-    for (const expense of expenses) {
-        addExpense(expense);
-    }
+
+    expenses.forEach(expense => {
+        addExpense(expense, true);
+    });
+
     updateSummary();
 }
 
-function addExpense(expense = {}) {
+function addExpense(expense = {}, isLoading = false) {
     const newRow = expensesTableBody.insertRow();
 
     const categoryCell = newRow.insertCell();
@@ -614,15 +601,21 @@ function addExpense(expense = {}) {
     amountCell.textContent = formatCurrency(expense.amount);
     dateCell.textContent = expense.date;
 
-    const cashbackAmount = expense.cashback !== undefined ?
-        expense.cashback :
-        calculateCashback(expense.amount, expense.category, expense.date);
+    let cashbackAmount;
+    if (isLoading && expense.cashback !== undefined) {
+        cashbackAmount = expense.cashback;
+    } else {
+        cashbackAmount = calculateCashback(expense.amount, expense.category, expense.date);
+    }
+
     cashbackCell.textContent = formatCurrency(cashbackAmount);
 
     updateCell.appendChild(editBtn);
     updateCell.appendChild(deleteBtn);
 
-    save();
+    if (!isLoading) {
+        save();
+    }
 }
 
 let currentRow = null;
@@ -704,11 +697,11 @@ function save() {
             category: row.querySelector('td:nth-child(1)').textContent,
             amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
             date: row.querySelector('td:nth-child(3)').textContent,
-            cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent),
+            cashback: revertCurrency(row.querySelector('td:nth-child(4)').textContent)
         };
     });
 
-    localStorage.setItem("SM", JSON.stringify(data));
+    localStorage.setItem("CB", JSON.stringify(data));
     updateSummary();
 }
 
@@ -740,7 +733,7 @@ function updateSummary() {
 }
 
 document.getElementById('download-btn').addEventListener('click', function () {
-    const data = JSON.parse(localStorage.getItem("SM") || "[]");
+    const data = JSON.parse(localStorage.getItem("CB") || "[]");
 
     if (data.length === 0) {
         alert("No data available to download.");
@@ -751,7 +744,7 @@ document.getElementById('download-btn').addEventListener('click', function () {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
 
-    XLSX.writeFile(workbook, "SuperMoneyCC.xlsx");
+    XLSX.writeFile(workbook, "SBICASHBACKCC.xlsx");
 });
 
 function toggleMenu() {

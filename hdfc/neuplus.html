@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#004C8F">
+    <meta name="description" content="CashCount helps you calculate the cashback received on your transactions, making it easier to track your savings.">
+    <meta name="keywords" content="CashCount, cashback calculator, credit card rewards, cashback tracking, finance, savings, how to get credit card cashback, calculate credit card cashback">
+    <link rel="icon" href="../logo.png" type="image/png">
+    <meta name="google-site-verification" content="p2wrjXgGd8_chTaVBvwOWh_6By7oPaoRuWA8NvFboNE" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <title>CashCount | TATA Neu Plus</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  color: #ddd;
+  padding-top: 150px;
+  background-color: black;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: url('https://wallpapercave.com/wp/wp4782115.jpg') center center/cover no-repeat fixed;
+  z-index: -1;
+}
+
+
+.glass {
+  backdrop-filter: blur(10px) saturate(180%);
+  border-radius: 12px;
+}
+
+.glass-grey {
+  background-color: rgba(17, 25, 40, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.glass-blue {
+  background-color: rgba(26, 206, 221, 0.25);
+  border: 1px solid rgba(26, 206, 221, 0.25);
+}
+
+.glass-green {
+  background: rgba(109, 8, 170, 0.5);
+  border: 1px solid rgba(109, 8, 170, 0.25);
+}
+
+input {
+  backdrop-filter: blur(10px) saturate(180%);
+  border-radius: 12px;
+  background-color: rgba(109, 197, 160, 0.25);
+}
+
+input:hover {
+  border: 1px solid rgba(109, 197, 160, 0.25);
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.input-section label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.input-section input[type="number"],
+.input-section input[type="date"] {
+  padding: 5px;
+  margin-right: 10px;
+  border-radius: 4px;
+  border-width: 1px;
+}
+
+button {
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#add-btn {
+  padding: 10px 20px;
+}
+
+.expenses-list {
+  margin: 20px;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: 10px;
+}
+
+table tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+table tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  color: white;
+}
+
+tfoot td {
+  font-weight: bold;
+}
+
+input {
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.dropdown {
+  border: 1px solid #ccc;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  border-width: 1px;
+}
+
+option {
+  color: black;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  margin: 15% auto;
+  padding: 20px;
+  width: 50%;
+  border-radius: 10px;
+}
+
+.form-field {
+  margin-bottom: 10px;
+}
+
+input[type="date"],
+input[type="number"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+}
+
+
+input[type="date"]:hover,
+input[type="number"]:hover {
+  border-color: #999;
+}
+
+
+input[type="date"]:focus,
+input[type="number"]:focus {
+  border-color: #555;
+  outline: none;
+}
+
+
+input::placeholder {
+  color: #999;
+}
+
+
+button[type="submit"] {
+  padding: 8px 16px;
+  background-color: #2196f3;
+}
+
+button[type="submit"]:hover {
+  background-color: #2196f3;
+}
+
+
+.success-btn {
+  margin: 0 10px;
+  background-color: #2196f3;
+}
+
+.success-btn:hover {
+  background-color: #2196f3;
+}
+
+
+.update-btn {
+  margin: 0 10px;
+  background-color: #2196f3;
+}
+
+.update-btn:hover {
+  background-color: #2196f3;
+}
+
+
+.danger-btn {
+  margin: 0 10px;
+  background-color: #f44336;
+}
+
+.danger-btn:hover {
+  background-color: #da190b;
+}
+
+.button-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: -webkit-fill-available;
+  margin: 10px;
+  background: rgba(17, 25, 40, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(17, 25, 40, 0.375);
+  border-radius: 10px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+@media screen {
+    footer {
+  position: fixed;
+  bottom: 0;
+  width: -webkit-fill-available;
+  margin: 10px;
+  background: rgba(17, 25, 40, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(17, 25, 40, 0.375);
+  border-radius: 10px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+}
+
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    padding: 15px 20px;
+    background: rgba(0, 76, 143, 0.75);
+    backdrop-filter: blur(16px);
+    border-radius: 15px;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .logo img {
+            height: 70px;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 35px;
+            font-weight: 600;
+        }
+
+        .navbar-title {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            color: rgb(255, 255, 255);
+            font: bold 20px/1 sans-serif;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+        }
+
+        .nav-links li {
+            margin: 0 15px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #ddd;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            background: #ddd;
+            width: 25px;
+            height: 3px;
+            margin: 4px 0;
+        }
+
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: rgba(17, 25, 40, 0.9);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height 0.5s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+  }
+
+  .nav-links li {
+    padding: 10px 0;
+    text-align: center;
+  }
+
+  .nav-links.active {
+    max-height: 300px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .menu-toggle {
+    display: flex;
+    cursor: pointer;
+  }
+}
+
+
+
+</style>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="../"><img src="../logo.png"></a></div>
+        <div class="navbar-title"><h1>TATA Neu Plus Credit Card</h1></div>
+        <ul class="nav-links">
+            <li><a href="../about.html">About</a></li>
+            <li><a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Contact</a></li>
+        </ul>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+    <br>
+    <br>
+    <div class="expenses-list">
+        <table class="glass glass-grey">
+            <thead>
+                <tr class="table-headers glass glass-blue">
+                    <th>Category</th>
+                    <th>Dumped</th>
+                    <th>Date</th>
+                    <th>Cashback</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="expense-table-body">
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>You Dumped/Your Cashback on Dump:</td>
+                    <td id="total-amount">₹0</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="center">
+        <button id="add-btn" class="success-btn">Add</button>
+        <button id="download-btn" class="success-btn">Download</button>
+    </div>
+    <br>
+    <br>
+    <div class="center">
+        <p>Neu Points will be credited to Tata Neu App.</p>
+    </div>
+    <div class="center">
+        <p>For any issues, or mistakes you can mail me and it will be fixed.</p></div>
+    <div>
+    <div>
+        <br>
+        <br>
+    </div>
+    <div class="center">
+        <a href="https://www.buymeacoffee.com/Midhilesh" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+    </div>
+    <div class="background"></div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content glass glass-green">
+            <h2 id="form-title">Update Entry</h2>
+            <form id="updateForm">
+                <div class="form-field">
+                    <label for="form-category-select">Category:</label>
+                    <select id="form-category-select" class="dropdown glass glass-green"></select>
+                </div>
+                <div class="form-field">
+                    <label for="form-amount-input">You Dumped:</label>
+                    <input type="number" step="0.01" id="form-amount-input">
+                </div>
+                <div class="form-field">
+                    <label for="form-date-input">Date:</label>
+                    <input type="date" id="form-date-input">
+                </div>
+                <div class="button-bar">
+                    <button type="submit" id="update-btn" class="update-btn"></button>
+                    <button type="button" id="cancel-btn" class="danger-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<footer class="center" id="footer">
+    <p>For any issues, feedback, reach me out at <a href="https://mail.google.com/mail/u/0/?fs=1&to=chinta.midhilesh@gmail.com&tf=cm" target="_blank">Midhilesh Chinta</a>.</p>
+</footer>
+
+<script>
+const categorySelect = document.getElementById('form-category-select');
+const amountInput = document.getElementById('form-amount-input');
+const dateInput = document.getElementById('form-date-input');
+const addBtn = document.getElementById('add-btn');
+const expensesTableBody = document.getElementById('expense-table-body');
+const totalAmountCell = document.getElementById('total-amount');
+const modal = document.getElementById('myModal');
+const updateForm = document.getElementById('updateForm');
+const cancelBtn = document.getElementById('cancel-btn');
+const updateBtn = document.getElementById('update-btn');
+const formTitle = document.getElementById('form-title');
+
+const MONTHLY_UPI_NEUCOINS_CAP = 500;
+
+const expenseCategories = [
+    'Select Category',
+    'Tata Neu App/Website (Non-EMI)',
+    'Tata Partner Brands (Non-EMI)',
+    'Tata Neu UPI Payments',
+    'Other UPI Spends',
+    'Non-Tata Brand Spends',
+    'Merchant EMI Spends',
+    'Grocery',
+    'Utility Payments',
+    'Telecom & Cable',
+    'Education Payments (Direct)',
+    'Education Payments (Third-party)',
+    'Rental Payments',
+    'Government Payments',
+    'International Transactions',
+    'Bill Payment (Tata Pay)',
+    'Tanishq',
+    'Cult.fit',
+    'Air India',
+    'Tata Play'
+];
+
+const MONTHLY_CAPS = {
+    UPI_NEUCOINS: 500,
+    GROCERY: 1000,
+    UTILITY: 2000,
+    TELECOM_CABLE: 2000
+};
+
+const neuPointsRates = {
+    'Tata Neu App/Website (Non-EMI)': 0.02,
+    'Tata Partner Brands (Non-EMI)': 0.02,
+    'Tata Neu UPI Payments': 0.01,
+    'Other UPI Spends': 0.0025,
+    'Non-Tata Brand Spends': 0.01,
+    'Merchant EMI Spends': 0.01,
+    'Grocery': 0.01,
+    'Utility Payments': 0.01,
+    'Telecom & Cable': 0.01,
+    'Education Payments (Direct)': 0.01,
+    'Education Payments (Third-party)': 0,
+    'Rental Payments': 0,
+    'Government Payments': 0,
+    'International Transactions': 0,
+    'Bill Payment (Tata Pay)': 0.01,
+    'Tanishq': 0.01,
+    'Cult.fit': 0.01,
+    'Air India': 0.01,
+    'Tata Play': 0.01
+};
+
+function hasMonthlyCap(category) {
+    return category === 'Grocery' ||
+           category === 'Utility Payments' ||
+           category === 'Telecom & Cable' ||
+           category.includes('UPI');
+}
+
+function getMonthlyCap(category) {
+    if (category.includes('UPI')) return MONTHLY_CAPS.UPI_NEUCOINS;
+    if (category === 'Grocery') return MONTHLY_CAPS.GROCERY;
+    if (category === 'Utility Payments') return MONTHLY_CAPS.UTILITY;
+    if (category === 'Telecom & Cable') return MONTHLY_CAPS.TELECOM_CABLE;
+    return Infinity;
+}
+
+function calculateCategoryNeuPointsForMonth(category, month, year) {
+    const expenses = JSON.parse(localStorage.getItem("NEUP") || "[]");
+    return expenses
+        .filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate.getMonth() === month &&
+                   expenseDate.getFullYear() === year &&
+                   (category.includes('UPI') ?
+                    expense.category.includes('UPI') :
+                    expense.category === category);
+        })
+        .reduce((total, expense) => total + (expense.neuPoints || 0), 0);
+}
+
+function calculateNeuPoints(amount, category, date) {
+    if (!neuPointsRates[category]) return 0;
+
+    const expenseDate = new Date(date);
+    const month = expenseDate.getMonth();
+    const year = expenseDate.getFullYear();
+
+    if (hasMonthlyCap(category)) {
+        const currentMonthPoints = calculateCategoryNeuPointsForMonth(category, month, year);
+        const monthlyCap = getMonthlyCap(category);
+        const rate = neuPointsRates[category];
+        const potentialPoints = amount * rate;
+
+        if (currentMonthPoints >= monthlyCap) {
+            return 0;
+        }
+
+        if (currentMonthPoints + potentialPoints > monthlyCap) {
+            return monthlyCap - currentMonthPoints;
+        }
+
+        return potentialPoints;
+    }
+
+    return Math.floor(amount * neuPointsRates[category]);
+}
+
+const totalRow = document.querySelector("tfoot tr");
+
+const totalNeuPointsCell = document.createElement('td');
+totalNeuPointsCell.id = "total-neupoints";
+totalNeuPointsCell.textContent = "₹0.00";
+totalRow.appendChild(totalNeuPointsCell);
+window.addEventListener('load', load);
+
+addBtn.addEventListener('click', openModal);
+
+function setCategories() {
+    categorySelect.innerHTML = '';
+    const categories = expenseCategories;
+    for (const category of categories) {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+    }
+}
+
+function calculateUPINeuPointsForMonth(month, year) {
+    const expenses = JSON.parse(localStorage.getItem("NEUP") || "[]");
+    return expenses
+        .filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate.getMonth() === month &&
+                   expenseDate.getFullYear() === year &&
+                   (expense.category === 'UPI via Tata Neu' || expense.category === 'Other UPI Spends');
+        })
+        .reduce((total, expense) => total + (expense.neuPoints || 0), 0);
+}
+
+function calculateNeuPoints(amount, category, date) {
+    if (!neuPointsRates[category]) return 0;
+
+    const expenseDate = new Date(date);
+    const month = expenseDate.getMonth();
+    const year = expenseDate.getFullYear();
+
+    if (category === 'UPI via Tata Neu' || category === 'Other UPI Spends') {
+        const currentMonthUPINeuPoints = calculateUPINeuPointsForMonth(month, year);
+        const rate = neuPointsRates[category];
+        const potentialNeuPoints = amount * rate;
+
+        if (currentMonthUPINeuPoints >= MONTHLY_UPI_NEUCOINS_CAP) {
+            return 0;
+        }
+
+        if (currentMonthUPINeuPoints + potentialNeuPoints > MONTHLY_UPI_NEUCOINS_CAP) {
+            return MONTHLY_UPI_NEUCOINS_CAP - currentMonthUPINeuPoints;
+        }
+
+        return potentialNeuPoints;
+    }
+
+    return Math.floor(amount * neuPointsRates[category]);
+}
+
+function load() {
+    const expenses = JSON.parse(localStorage.getItem("NEUP") || "[]");
+    expensesTableBody.innerHTML = '';
+    for (const expense of expenses) {
+        addExpense(expense);
+    }
+    updateSummary();
+}
+
+function addExpense(expense = {}) {
+    const newRow = expensesTableBody.insertRow();
+
+    const categoryCell = newRow.insertCell();
+    const amountCell = newRow.insertCell();
+    const dateCell = newRow.insertCell();
+    const neuPointsCell = newRow.insertCell();
+    const updateCell = newRow.insertCell();
+    const editBtn = document.createElement('button');
+    const deleteBtn = document.createElement('button');
+
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('btn', 'danger-btn');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.add('btn', 'update-btn');
+    editBtn.addEventListener('click', handleEditButtonClick);
+
+    deleteBtn.addEventListener('click', event => {
+        event.target.closest('tr').remove();
+        save();
+    });
+
+    categoryCell.textContent = expense.category;
+    amountCell.textContent = formatCurrency(expense.amount);
+    dateCell.textContent = expense.date;
+
+    const neuPointsAmount = expense.neuPoints !== undefined ?
+        expense.neuPoints :
+        calculateNeuPoints(expense.amount, expense.category, expense.date);
+    neuPointsCell.textContent = formatNeuPoints(neuPointsAmount);
+
+    updateCell.appendChild(editBtn);
+    updateCell.appendChild(deleteBtn);
+
+    save();
+}
+
+let currentRow = null;
+
+function handleEditButtonClick(event) {
+    const row = event.target.closest('tr');
+    categorySelect.value = row.querySelector('td:nth-child(1)').textContent;
+    amountInput.value = revertCurrency(row.querySelector('td:nth-child(2)').textContent);
+    dateInput.value = row.querySelector('td:nth-child(3)').textContent;
+
+    currentRow = row;
+    openModal();
+}
+
+function openModal() {
+    modal.style.display = 'block';
+    formTitle.textContent = currentRow === null ? 'Add Expense' : 'Update Expense';
+    updateBtn.textContent = currentRow === null ? 'Add' : 'Update';
+    if (currentRow === null) {
+        dateInput.max = new Date().toISOString().split("T")[0];
+        dateInput.value = new Date().toISOString().split("T")[0];
+    }
+    setCategories();
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+    updateForm.reset();
+    currentRow = null;
+}
+
+function handleSubmit(event) {
+    event.preventDefault();
+
+    const category = categorySelect.value;
+    let amount = Number(amountInput.value);
+    const date = dateInput.value;
+
+    if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+    }
+    if (date === '') {
+        alert('Please select a date');
+        return;
+    }
+    if (category === '' || category === 'Select Category') {
+        alert('Please select a category');
+        return;
+    }
+
+    const neuPointsAmount = calculateNeuPoints(amount, category, date);
+
+    if (currentRow === null) {
+        addExpense({ category, amount, date, neuPoints: neuPointsAmount });
+    } else {
+        currentRow.querySelector('td:nth-child(1)').textContent = category;
+        currentRow.querySelector('td:nth-child(2)').textContent = formatCurrency(amount);
+        currentRow.querySelector('td:nth-child(3)').textContent = date;
+        currentRow.querySelector('td:nth-child(4)').textContent = formatNeuPoints(neuPointsAmount);
+    }
+
+    save();
+    closeModal();
+}
+
+cancelBtn.addEventListener('click', closeModal);
+updateForm.addEventListener('submit', handleSubmit);
+
+window.addEventListener('click', function (event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+
+function save() {
+    const data = getEntryRows().map(row => {
+        return {
+            category: row.querySelector('td:nth-child(1)').textContent,
+            amount: revertCurrency(row.querySelector('td:nth-child(2)').textContent),
+            date: row.querySelector('td:nth-child(3)').textContent,
+            neuPoints: revertNeuPoints(row.querySelector('td:nth-child(4)').textContent),
+        };
+    });
+
+    localStorage.setItem("NEUP", JSON.stringify(data));
+    updateSummary();
+}
+
+function getEntryRows() {
+    return Array.from(expensesTableBody.children);
+}
+
+function formatCurrency(amount) {
+    return Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+}
+
+function formatNeuPoints(points) {
+    return points.toFixed(2) + " NeuCoins";
+}
+
+function revertCurrency(amount) {
+    return Number(amount.replace(/[^0-9.-]+/g, ""));
+}
+
+function revertNeuPoints(points) {
+    return Number(points.replace(" NeuCoins", ""));
+}
+
+function updateSummary() {
+    let totalSpending = 0;
+    let totalNeuPoints = 0;
+
+    getEntryRows().forEach(row => {
+        const amount = revertCurrency(row.querySelector('td:nth-child(2)').textContent);
+        const neuPoints = revertNeuPoints(row.querySelector('td:nth-child(4)').textContent);
+        totalSpending += amount;
+        totalNeuPoints += neuPoints;
+    });
+
+    totalAmountCell.textContent = formatCurrency(totalSpending);
+    totalNeuPointsCell.textContent = formatNeuPoints(totalNeuPoints);
+}
+
+document.getElementById('download-btn').addEventListener('click', function () {
+    const data = JSON.parse(localStorage.getItem("NEUP") || "[]");
+
+    if (data.length === 0) {
+        alert("No data available to download.");
+        return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+
+    XLSX.writeFile(workbook, "NEUPlusCC.xlsx");
+});
+
+function toggleMenu() {
+    document.querySelector('.nav-links').classList.toggle('active');
+}
+    </script>
+
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="Midhilesh" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Left" data-x_margin="18" data-y_margin="18"></script>
+</html>
